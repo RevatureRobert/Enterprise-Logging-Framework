@@ -2,11 +2,14 @@ package dev.enterprise.logger;
 
 import dev.enterprise.config.LoggingConfig;
 
+import java.io.File;
 import java.io.IOException;
-import java.nio.CharBuffer;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -20,28 +23,29 @@ public class FileLogger extends AbstractLogger{
 
     private final FileChannel FILE_CHANNEL;
 
-    private final CharBuffer BUFFER;
+    private final ByteBuffer BUFFER;
 
     private Path path;
 
     @Override
-    public void debug(String message) {
+    public void debug(String message) throws IOException {
         addToBuffer(message,"Debug: ","Debug message is too long");
     }
     @Override
-    public void info(String message) {
+    public void info(String message) throws IOException {
         addToBuffer(message,"Info: ","Info message is too long");
     }
 
     @Override
-    public void warning(String message) {
+    public void warning(String message) throws IOException {
         addToBuffer(message,"Warning: ","Warning message is too long");
     }
 
-    private void addToBuffer(String message, String preamble, String exceptionMessage){
+    private void addToBuffer(String message, String preamble, String exceptionMessage) throws IOException {
         message = preamble + LocalDateTime.now().toString() + message;
         if (message.length() <= 128) {
-            BUFFER.put(message);
+            BUFFER.asCharBuffer().put(message);
+            FILE_CHANNEL.write(BUFFER);
         } else
             throw new IllegalArgumentException(exceptionMessage);
         BUFFER.clear();
@@ -56,16 +60,17 @@ public class FileLogger extends AbstractLogger{
         else throw new IOException("Error reading configuration file. property: output-directory");
         result = configuration.getPropertyByKey("output-file-name-template");
         if (result.isPresent())
-            outputFilename = LocalDateTime.now() + result.get();
+            outputFilename = result.get();
         else
             throw new IOException("Error reading configuration file. property: output-file-name-template");
             this.path = Paths.get(outputDirectory+"/"+outputFilename);
-         return FileChannel.open(this.path);
+            RandomAccessFile file = new RandomAccessFile("D:\\data\\revature documents\\gitrepos\\Enterprise-Logging-Framework\\test.txt","W");
+            return file.getChannel();
     }
 
     private FileLogger() throws IOException {
         this.configuration= LoggingConfig.getInstance();
         this.FILE_CHANNEL = getFileChannel();
-        this.BUFFER = CharBuffer.allocate(128);
+        this.BUFFER = ByteBuffer.allocate(128);
     }
 }
