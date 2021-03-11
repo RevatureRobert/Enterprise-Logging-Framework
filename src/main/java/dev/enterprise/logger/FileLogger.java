@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -42,10 +43,14 @@ public class FileLogger extends AbstractLogger{
     }
 
     private void addToBuffer(String message, String preamble, String exceptionMessage) throws IOException {
-        message = preamble + LocalDateTime.now().toString() + message;
+        message = preamble + LocalDateTime.now().toString() + " : " + message;
         if (message.length() <= 128) {
-            BUFFER.asCharBuffer().put(message);
+            BUFFER.put(message.getBytes(StandardCharsets.UTF_8));
+            BUFFER.flip();
             FILE_CHANNEL.write(BUFFER);
+            System.out.println(BUFFER);
+            FILE_CHANNEL.force(false);
+            //FILE_CHANNEL.truncate(message.getBytes(StandardCharsets.UTF_8).length);
         } else
             throw new IllegalArgumentException(exceptionMessage);
         BUFFER.clear();
@@ -64,13 +69,18 @@ public class FileLogger extends AbstractLogger{
         else
             throw new IOException("Error reading configuration file. property: output-file-name-template");
             this.path = Paths.get(outputDirectory+"/"+outputFilename);
-            RandomAccessFile file = new RandomAccessFile("D:\\data\\revature documents\\gitrepos\\Enterprise-Logging-Framework\\test.txt","W");
+            RandomAccessFile file = new RandomAccessFile("D:\\data\\revature documents\\gitrepos\\Enterprise-Logging-Framework\\test.txt","rw");
             return file.getChannel();
     }
 
     private FileLogger() throws IOException {
         this.configuration= LoggingConfig.getInstance();
         this.FILE_CHANNEL = getFileChannel();
-        this.BUFFER = ByteBuffer.allocate(128);
+        this.BUFFER = ByteBuffer.allocate(256);
+    }
+    private static FileLogger instance;
+
+    public static FileLogger getInstance() throws IOException {
+        return Optional.ofNullable(instance).orElse(instance = new FileLogger());
     }
 }
