@@ -30,12 +30,12 @@ public class FileLogger extends AbstractLogger{
     }
     @Override
     public void info(String message) {
-
+        addToBuffer(message,"Info: ","Info message is too long");
     }
 
     @Override
     public void warning(String message) {
-
+        addToBuffer(message,"Warning: ","Warning message is too long");
     }
 
     private void addToBuffer(String message, String preamble, String exceptionMessage){
