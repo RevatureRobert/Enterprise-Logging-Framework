@@ -3,7 +3,24 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
+    <name>LOG4W</name>
+    <description>A logging framework meant to assist in the monitoring of java running java applications.</description>
+    <issueManagement>
+        <url>https://github.com/RevatureRobert/Enterprise-Logging-Framework/issues</url>
+    </issueManagement>
+    <developers>
+        <developer>
+            <name>2102 Enterprise batch</name>
+            <url>https://github.com/orgs/RevatureRobert/teams/2102-enterprise-team</url>
+        </developer>
+    </developers>
+    <organization>
+        <name>RevatureRobert</name>
+        <url>https://github.com/RevatureRobert</url>
+    </organization>
+    <scm>
+        <url>https://github.com/RevatureRobert/Enterprise-Logging-Framework</url>
+    </scm>
     <groupId>dev.enterprise</groupId>
     <artifactId>Log4W</artifactId>
     <version>0.1</version>
