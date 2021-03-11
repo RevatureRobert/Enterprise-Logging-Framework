@@ -35,22 +35,11 @@ public class FileLogger extends AbstractLogger{
     }
     @Override
     public void info(String message) {
-        message = "Info: " + LocalDateTime.now().toString() + message;
-        if (message.length() <= 128) {
-            BUFFER.put(message);
-        } else
-            throw new IllegalArgumentException("Info message is too long");
-        BUFFER.clear();
+
     }
 
     @Override
     public void warning(String message) {
-        message = "Warning: " + LocalDateTime.now().toString() + message;
-        if (message.length() <= 128) {
-            BUFFER.put(message);
-        } else
-            throw new IllegalArgumentException("Warning message is too long");
-        BUFFER.clear();
 
     }
 
