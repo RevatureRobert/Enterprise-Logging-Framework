@@ -26,12 +26,7 @@ public class FileLogger extends AbstractLogger{
 
     @Override
     public void debug(String message) {
-        message = "Debug: " + LocalDateTime.now().toString() + message;
-        if (message.length() <= 128) {
-            BUFFER.put(message);
-        } else
-            throw new IllegalArgumentException("Debug message is too long");
-        BUFFER.clear();
+        addToBuffer(message,"Debug: ","Debug message is too long");
     }
     @Override
     public void info(String message) {
@@ -41,6 +36,15 @@ public class FileLogger extends AbstractLogger{
     @Override
     public void warning(String message) {
 
+    }
+
+    private void addToBuffer(String message, String preamble, String exceptionMessage){
+        message = preamble + LocalDateTime.now().toString() + message;
+        if (message.length() <= 128) {
+            BUFFER.put(message);
+        } else
+            throw new IllegalArgumentException(exceptionMessage);
+        BUFFER.clear();
     }
 
     private FileChannel getFileChannel() throws IOException {
