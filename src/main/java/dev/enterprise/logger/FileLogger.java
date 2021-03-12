@@ -96,6 +96,9 @@ public class FileLogger extends AbstractLogger{
     private static FileLogger instance;
 
     public static FileLogger getInstance() throws IOException {
-        return Optional.ofNullable(instance).orElse(instance = new FileLogger());
+        if (instance == null)
+            instance = new FileLogger();
+
+        return instance;
     }
 }
