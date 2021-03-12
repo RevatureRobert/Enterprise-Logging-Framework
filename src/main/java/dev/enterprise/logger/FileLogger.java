@@ -31,16 +31,21 @@ public class FileLogger extends AbstractLogger{
 
     @Override
     public void debug(String message) throws IOException {
-        addToBuffer(message, "Debug: ","Debug message is too long");
+        addToBuffer(message, "Debug:   ","Debug message is too long");
     }
     @Override
     public void info(String message) throws IOException {
-        addToBuffer(message, "Info: ","Info message is too long");
+        addToBuffer(message, "Info:    ","Info message is too long");
     }
 
     @Override
     public void warning(String message) throws IOException {
         addToBuffer(message, "Warning: ","Warning message is too long");
+    }
+
+    // for when you don't specify the exception Message
+    private void addToBuffer(String message, String preamble) throws IOException {
+        addToBuffer(message,preamble,"");
     }
 
     private void addToBuffer(String message, String preamble, String exceptionMessage) throws IOException {
@@ -50,7 +55,6 @@ public class FileLogger extends AbstractLogger{
             BUFFER.flip();
             CHANNEL.position(CHANNEL.size());
             CHANNEL.write(BUFFER);
-            System.out.println(BUFFER);
             CHANNEL.force(false);
         } else{
             throw new IllegalArgumentException(exceptionMessage);
@@ -79,11 +83,14 @@ public class FileLogger extends AbstractLogger{
         return new RandomAccessFile(getFilePath(directoryKey, filenameKey).toFile(),"rw").getChannel();
     }
 
-    public FileLogger(String filenameKey) throws IOException {
+    public FileLogger(String directoryKey, String filenameKey) throws IOException {
         this.configuration= LoggingConfig.getInstance();
 
-        this.CHANNEL = getFileChannel("output-directory", filenameKey);
+        this.CHANNEL = getFileChannel(directoryKey, filenameKey);
 
         this.BUFFER = ByteBuffer.allocate(256);
+
+        // Let's us know where in the file we started logging this particular session
+        addToBuffer("New Logging Session","  Begin: ");
     }
 }
