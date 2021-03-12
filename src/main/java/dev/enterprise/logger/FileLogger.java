@@ -68,9 +68,9 @@ public class FileLogger extends AbstractLogger{
             outputFilename = result.get();
         else
             throw new IOException("Error reading configuration file. property: output-file-name-template");
-            this.path = Paths.get(outputDirectory+"/"+outputFilename);
-            RandomAccessFile file = new RandomAccessFile("D:\\data\\revature documents\\gitrepos\\Enterprise-Logging-Framework\\test.txt","rw");
-            return file.getChannel();
+        this.path = Paths.get(outputDirectory+"/"+outputFilename);
+        RandomAccessFile file = new RandomAccessFile(path.toFile(),"rw");
+        return file.getChannel();
     }
 
     private FileLogger() throws IOException {
