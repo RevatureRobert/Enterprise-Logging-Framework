@@ -83,14 +83,19 @@ public class FileLogger extends AbstractLogger{
         return new RandomAccessFile(getFilePath(directoryKey, filenameKey).toFile(),"rw").getChannel();
     }
 
-    public FileLogger(String directoryKey, String filenameKey) throws IOException {
+    private FileLogger() throws IOException {
         this.configuration= LoggingConfig.getInstance();
 
-        this.CHANNEL = getFileChannel(directoryKey, filenameKey);
+        this.CHANNEL = getFileChannel("output-directory", "output-file-name-template");
 
         this.BUFFER = ByteBuffer.allocate(256);
 
         // Let's us know where in the file we started logging this particular session
         addToBuffer("New Logging Session","  Begin: ");
+    }
+    private static FileLogger instance;
+
+    public static FileLogger getInstance() throws IOException {
+        return Optional.ofNullable(instance).orElse(instance = new FileLogger());
     }
 }
